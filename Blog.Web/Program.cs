@@ -1,6 +1,6 @@
 using Blog.Data.Context;
 using Blog.Data.Extensions;
-using Blog.Web.Extensions;
+using Blog.Service.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Web
