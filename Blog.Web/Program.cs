@@ -1,5 +1,6 @@
 using Blog.Data.Context;
 using Blog.Data.Extensions;
+using Blog.Web.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Web
@@ -9,14 +10,17 @@ namespace Blog.Web
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
+
+			// Load custom extensions for services
 			builder.Services.LoadDataLayerExtension(builder.Configuration);
-			// Add services to the container.
+			builder.Services.ServiceLayerExtension();
+
+			// Add services to the container
 			builder.Services.AddControllersWithViews();
-			
 
 			var app = builder.Build();
 
-			// Configure the HTTP request pipeline.
+			// Configure the HTTP request pipeline
 			if (!app.Environment.IsDevelopment())
 			{
 				app.UseExceptionHandler("/Home/Error");
@@ -31,9 +35,17 @@ namespace Blog.Web
 
 			app.UseAuthorization();
 
-			app.MapControllerRoute(
-				name: "default",
-				pattern: "{controller=Home}/{action=Index}/{id?}");
+			// Configure endpoints
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapAreaControllerRoute(
+					name: "Admin",
+					areaName: "Admin",
+					pattern: "Admin/{controller=Home}/{action=Index}/{id?}"
+				);
+				endpoints.MapDefaultControllerRoute();
+				
+			});
 
 			app.Run();
 		}
