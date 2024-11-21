@@ -1,7 +1,10 @@
-﻿using Blog.Entity.Entities;
+﻿using Blog.Core.Entities;
+using Blog.Entity.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Data.Context
 {
-	public class AppDbContext : DbContext
+	public class AppDbContext : IdentityDbContext<User, Role, Guid, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
 	{
 		public AppDbContext()
 		{
@@ -25,6 +28,7 @@ namespace Blog.Data.Context
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			base.OnModelCreating(modelBuilder);
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 		}
 	}

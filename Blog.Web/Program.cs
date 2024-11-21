@@ -1,6 +1,8 @@
+using Blog.Entity.Entities;
 using Blog.Data.Context;
 using Blog.Data.Extensions;
 using Blog.Service.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Web
@@ -14,9 +16,36 @@ namespace Blog.Web
 			// Load custom extensions for services
 			builder.Services.LoadDataLayerExtension(builder.Configuration);
 			builder.Services.ServiceLayerExtension();
+			builder.Services.AddSession();
 
 			// Add services to the container
 			builder.Services.AddControllersWithViews();
+			builder.Services.AddIdentity<User,Role>(opt=>
+			{
+				opt.Password.RequireNonAlphanumeric = false;
+				opt.Password.RequireLowercase = false;
+				opt.Password.RequireUppercase = false;
+			})
+				.AddRoleManager<RoleManager<Role>>()
+				.AddEntityFrameworkStores<AppDbContext>()
+				.AddDefaultTokenProviders();
+
+			builder.Services.ConfigureApplicationCookie(conf =>
+			{
+				conf.LoginPath = new PathString("/Admin/Auth/Login");
+				conf.LogoutPath = new PathString("/Admin/Auth/Logout");
+				conf.Cookie = new CookieBuilder
+				{
+					Name = "Blog",
+					HttpOnly = true,
+					SameSite = SameSiteMode.Strict,
+					SecurePolicy = CookieSecurePolicy.SameAsRequest,
+				};
+				conf.SlidingExpiration = true;
+				conf.ExpireTimeSpan=TimeSpan.FromDays(30);
+				conf.AccessDeniedPath = new PathString("/Admin/Auth/AccessDenied");
+			});
+
 
 			var app = builder.Build();
 
@@ -30,9 +59,11 @@ namespace Blog.Web
 
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
+			
+			app.UseSession();
 
 			app.UseRouting();
-
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			// Configure endpoints

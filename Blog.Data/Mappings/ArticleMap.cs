@@ -19,12 +19,13 @@ namespace Blog.Data.Mappings
 				Title = "Deneme makale ",
 				Content = "sadsaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
 				ViewCount = 11,
-
 				CategoryId = Guid.Parse("4028094A-6692-442E-8952-555355BDAF74"),
 				ImageId = Guid.Parse("4028094A-6692-442E-8952-555355BDAF74"),
 				CreatedBy = "Admin",
 				CreatedDate = DateTime.Now,
-				IsActive = true
+				IsActive = true,
+				UserId = Guid.Parse("DB1CDE1F-A458-428B-B0E2-AFE00C24C7B8")
+
 			},
 			new Article
 			{
@@ -36,7 +37,8 @@ namespace Blog.Data.Mappings
 				ImageId = Guid.Parse("405CEC6D-F564-4A10-B5FF-FE13757ABD60"),
 				CreatedBy = "Admin",
 				CreatedDate = DateTime.Now,
-				IsActive = true
+				IsActive = true,
+				UserId = Guid.Parse("733C1A55-8720-4BE5-AB73-A204C6F38F4B"),
 			});
 		}
 	}
