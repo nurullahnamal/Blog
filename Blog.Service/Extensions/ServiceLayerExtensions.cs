@@ -13,13 +13,15 @@ namespace Blog.Service.Extensions
 {
 	public static class ServiceLayerExtensions
 	{
-		public static IServiceCollection ServiceLayerExtension(this IServiceCollection services)
+		public static IServiceCollection LoadServiceLayerExtension(this IServiceCollection services)
 		{
-			var assemly = Assembly.GetExecutingAssembly();
+			var assembly = Assembly.GetExecutingAssembly();
 
 			services.AddScoped<IArticleService, ArticleService>();
+			services.AddScoped<ICategoryService, CategoryService>();
 
-			services.AddAutoMapper(assemly);
+			services.AddAutoMapper(assembly);
+
 			return services;
 		}
 	}

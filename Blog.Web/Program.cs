@@ -15,7 +15,7 @@ namespace Blog.Web
 
 			// Load custom extensions for services
 			builder.Services.LoadDataLayerExtension(builder.Configuration);
-			builder.Services.ServiceLayerExtension();
+			builder.Services.LoadServiceLayerExtension();
 			builder.Services.AddSession();
 
 			// Add services to the container

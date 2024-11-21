@@ -20,7 +20,7 @@ namespace Blog.Data.Mappings
 				CategoryName = "Asp net core",
 				CreatedBy = "Admin",
 				CreatedDate = DateTime.Now,
-				IsActive = true
+				IsDeleted = false
 			},
 			new Category
 			{
@@ -29,7 +29,7 @@ namespace Blog.Data.Mappings
 				CategoryName = "2 Visual Studio",
 				CreatedBy = "Admin",
 				CreatedDate = DateTime.Now,
-				IsActive = true
+				IsDeleted = false
 
 			});
 		}

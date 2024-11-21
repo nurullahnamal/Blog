@@ -21,7 +21,7 @@ namespace Blog.Data.Mappings
 				FileType = "jpg",
 				CreatedBy = "Admin",
 				CreatedDate = DateTime.Now,
-				IsActive = true
+				IsDeleted = false
 
 			},
 			new Image
@@ -32,7 +32,8 @@ namespace Blog.Data.Mappings
 				FileType = "png",
 				CreatedBy = "Admin",
 				CreatedDate = DateTime.Now,
-				IsActive = true
+				IsDeleted = false
+
 
 			});
 		}

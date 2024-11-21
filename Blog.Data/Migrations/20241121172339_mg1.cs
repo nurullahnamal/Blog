@@ -39,7 +39,7 @@ namespace Blog.Data.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,7 +59,7 @@ namespace Blog.Data.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -138,7 +138,7 @@ namespace Blog.Data.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -252,27 +252,27 @@ namespace Blog.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("0e67e15f-6caf-425b-ab91-075612dd4d16"), "daeef77e-7922-4889-9a30-5b319303122a", "RootAdmin", "ROOTADMIN" },
-                    { new Guid("48c1f67b-f55f-4cd8-8399-0ae2d61f5be8"), "08b13a98-e765-430e-b0b7-a25b70a37757", "Admin", "ADMIN" },
-                    { new Guid("5957a8ce-1d49-4d12-9a41-da90b5b7a62b"), "1e11807c-9d0c-44c1-82f1-f5d43f5a93df", "User", "USER" }
+                    { new Guid("0e67e15f-6caf-425b-ab91-075612dd4d16"), "508bb49c-03be-4646-a81f-5efbcd07898d", "RootAdmin", "ROOTADMIN" },
+                    { new Guid("48c1f67b-f55f-4cd8-8399-0ae2d61f5be8"), "dedbdafc-20e1-4ad8-ada6-725446d8762b", "Admin", "ADMIN" },
+                    { new Guid("5957a8ce-1d49-4d12-9a41-da90b5b7a62b"), "370df8e4-56cf-44cc-80da-b87af55809c8", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Categories",
-                columns: new[] { "Id", "CategoryName", "CreatedBy", "CreatedDate", "DeletedBy", "DeletedDate", "IsActive", "ModifiedBy", "ModifiedDate" },
+                columns: new[] { "Id", "CategoryName", "CreatedBy", "CreatedDate", "DeletedBy", "DeletedDate", "IsDeleted", "ModifiedBy", "ModifiedDate" },
                 values: new object[,]
                 {
-                    { new Guid("4028094a-6692-442e-8952-555355bdaf74"), "Asp net core", "Admin", new DateTime(2024, 11, 21, 11, 19, 16, 195, DateTimeKind.Local).AddTicks(3749), null, null, true, null, null },
-                    { new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "2 Visual Studio", "Admin", new DateTime(2024, 11, 21, 11, 19, 16, 195, DateTimeKind.Local).AddTicks(3752), null, null, true, null, null }
+                    { new Guid("4028094a-6692-442e-8952-555355bdaf74"), "Asp net core", "Admin", new DateTime(2024, 11, 21, 20, 23, 39, 35, DateTimeKind.Local).AddTicks(1961), null, null, false, null, null },
+                    { new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "2 Visual Studio", "Admin", new DateTime(2024, 11, 21, 20, 23, 39, 35, DateTimeKind.Local).AddTicks(1965), null, null, false, null, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Images",
-                columns: new[] { "Id", "CreatedBy", "CreatedDate", "DeletedBy", "DeletedDate", "FileName", "FileType", "IsActive", "ModifiedBy", "ModifiedDate" },
+                columns: new[] { "Id", "CreatedBy", "CreatedDate", "DeletedBy", "DeletedDate", "FileName", "FileType", "IsDeleted", "ModifiedBy", "ModifiedDate" },
                 values: new object[,]
                 {
-                    { new Guid("4028094a-6692-442e-8952-555355bdaf74"), "Admin", new DateTime(2024, 11, 21, 11, 19, 16, 195, DateTimeKind.Local).AddTicks(4598), null, null, "images/vimage", "jpg", true, null, null },
-                    { new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "Admin", new DateTime(2024, 11, 21, 11, 19, 16, 195, DateTimeKind.Local).AddTicks(4606), null, null, "images/vimage", "png", true, null, null }
+                    { new Guid("4028094a-6692-442e-8952-555355bdaf74"), "Admin", new DateTime(2024, 11, 21, 20, 23, 39, 35, DateTimeKind.Local).AddTicks(2793), null, null, "images/vimage", "jpg", false, null, null },
+                    { new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "Admin", new DateTime(2024, 11, 21, 20, 23, 39, 35, DateTimeKind.Local).AddTicks(2802), null, null, "images/vimage", "png", false, null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -280,17 +280,17 @@ namespace Blog.Data.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "ImageId", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("733c1a55-8720-4be5-ab73-a204c6f38f4b"), 0, "5ac89b5a-4776-488e-9417-5c6a099cbe41", "admin@gmail.com", false, "Mete", new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "Namal", false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEPuRYrPoZrxnVvXKrgprxX05dVgMwy7op+uPRVwB12hBSFaAdp0VFiUeg/xZvZrYDw==", "+90566655875", false, "a2f07a2e-22ca-409a-b68e-3d64bd83cd05", false, "admin@gmail.com" },
-                    { new Guid("db1cde1f-a458-428b-b0e2-afe00c24c7b8"), 0, "4a527ffe-fb9d-4b0d-a29d-059d1769b569", "rootadmin@gmail.com", true, "Nurullah", new Guid("4028094a-6692-442e-8952-555355bdaf74"), "Namal", false, null, "ROOTADMIN@GMAIL.COM", "ROOTADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEPz6soAurZ8ZjEMcNxvLe9ZRdh5VvbaTTm38P4lHgQvLhe5nt8fccstGdQk8CbHJfA==", "+9056665585", true, "3cdea2a2-ec28-4530-854d-ccb4bbace963", false, "rootadmin@gmail.com" }
+                    { new Guid("733c1a55-8720-4be5-ab73-a204c6f38f4b"), 0, "79c8d817-4c04-4b25-83b1-177f61833480", "admin@gmail.com", false, "Mete", new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "Namal", false, null, "ADMIN@GMAIL.COM", "ADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAEEtnKBBAXW5b65R+gU/J7DS9dU2CBln3tnItrd/Pdab+Dc7Rsll9ZTHtmf9GA81q7Q==", "+90566655875", false, "7a3676a2-d352-4e29-a0fb-64313938de19", false, "admin@gmail.com" },
+                    { new Guid("db1cde1f-a458-428b-b0e2-afe00c24c7b8"), 0, "c7417bb1-2f06-40ea-8382-52cd915736f1", "rootadmin@gmail.com", true, "Nurullah", new Guid("4028094a-6692-442e-8952-555355bdaf74"), "Namal", false, null, "ROOTADMIN@GMAIL.COM", "ROOTADMIN@GMAIL.COM", "AQAAAAIAAYagAAAAED6nYvVrnGjZxeSRAf6YIRdKZL0bSSDyRerxA48HUPUGUr4jT0VQIMRzEayQETlM/g==", "+9056665585", true, "86f955cc-b254-4c5d-aba1-4590d87edd52", false, "rootadmin@gmail.com" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Articles",
-                columns: new[] { "Id", "CategoryId", "Content", "CreatedBy", "CreatedDate", "DeletedBy", "DeletedDate", "ImageId", "IsActive", "ModifiedBy", "ModifiedDate", "Title", "UserId", "ViewCount" },
+                columns: new[] { "Id", "CategoryId", "Content", "CreatedBy", "CreatedDate", "DeletedBy", "DeletedDate", "ImageId", "IsDeleted", "ModifiedBy", "ModifiedDate", "Title", "UserId", "ViewCount" },
                 values: new object[,]
                 {
-                    { new Guid("591dd0a8-f3c8-4526-be64-2464627bcf64"), new Guid("4028094a-6692-442e-8952-555355bdaf74"), "sadsaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "Admin", new DateTime(2024, 11, 21, 11, 19, 16, 195, DateTimeKind.Local).AddTicks(2745), null, null, new Guid("4028094a-6692-442e-8952-555355bdaf74"), true, null, null, "Deneme makale ", new Guid("db1cde1f-a458-428b-b0e2-afe00c24c7b8"), 11 },
-                    { new Guid("71956647-50fb-4121-8ce2-04a9c117d5fc"), new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "2 sadsaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "Admin", new DateTime(2024, 11, 21, 11, 19, 16, 195, DateTimeKind.Local).AddTicks(2751), null, null, new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), true, null, null, " 2 Deneme makale ", new Guid("733c1a55-8720-4be5-ab73-a204c6f38f4b"), 11 }
+                    { new Guid("0a11921a-dbad-4f27-b116-497f6bf0adda"), new Guid("4028094a-6692-442e-8952-555355bdaf74"), "sadsaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "Admin", new DateTime(2024, 11, 21, 20, 23, 39, 35, DateTimeKind.Local).AddTicks(923), null, null, new Guid("4028094a-6692-442e-8952-555355bdaf74"), false, null, null, "Deneme makale ", new Guid("db1cde1f-a458-428b-b0e2-afe00c24c7b8"), 11 },
+                    { new Guid("b77c4964-1935-44dc-b716-aaa10b7b8793"), new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), "2 sadsaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "Admin", new DateTime(2024, 11, 21, 20, 23, 39, 35, DateTimeKind.Local).AddTicks(930), null, null, new Guid("405cec6d-f564-4a10-b5ff-fe13757abd60"), false, null, null, " 2 Deneme makale ", new Guid("733c1a55-8720-4be5-ab73-a204c6f38f4b"), 11 }
                 });
 
             migrationBuilder.InsertData(

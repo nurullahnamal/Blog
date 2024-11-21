@@ -9,16 +9,15 @@ namespace Blog.Web.Areas.Admin.Controllers
 	public class HomeController : Controller
 	{
 
-
 		private readonly IArticleService articleService;
 		public HomeController(IArticleService articleService)
 		{
 			this.articleService = articleService;
 		}
-		public async  Task<IActionResult> Index()
+		public async Task<IActionResult> Index()
 		{
-			var 	artices=await articleService.GetAllArticlesAsync();
-				return View(artices);
+			var artices = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
+			return View(artices);
 		}
 	}
 }
