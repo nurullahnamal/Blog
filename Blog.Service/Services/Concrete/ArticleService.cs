@@ -24,15 +24,11 @@ namespace Blog.Service.Services.Concrete
 
 		public async Task CreateArticleAsync(ArticleAddDto articleAddDto)
 		{
-			var userId = Guid.Parse("CB94223B-CCB8-4F2F-93D7-0DF96A7F065C");
+			var userId = Guid.Parse("DB1CDE1F-A458-428B-B0E2-AFE00C24C7B8");
+			var imageId = Guid.Parse("4028094A-6692-442E-8952-555355BDAF74");
 
-			var article = new Article
-			{
-				Title = articleAddDto.Title,
-				Content = articleAddDto.Content,
-				CategoryId = articleAddDto.CategoryId,
-				UserId = userId
-			};
+			var article = new Article(articleAddDto.Title, articleAddDto.Content, userId, articleAddDto.CategoryId, imageId);
+			
 
 			await unitOfWork.GetRepository<Article>().AddAsync(article);
 			await unitOfWork.SaveAsync();
@@ -40,31 +36,36 @@ namespace Blog.Service.Services.Concrete
 
 		public async Task<List<ArticleDto>> GetAllArticlesWithCategoryNonDeletedAsync()
 		{
-
 			var articles = await unitOfWork.GetRepository<Article>().GetAllAsync(x => !x.IsDeleted, x => x.Category);
 			var map = mapper.Map<List<ArticleDto>>(articles);
-
 			return map;
 		}
 		public async Task<ArticleDto> GetArticleWithCategoryNonDeletedAsync(Guid articleId)
 		{
-
 			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleId, x => x.Category);
 			var map = mapper.Map<ArticleDto>(article);
-
 			return map;
 		}
 		public async Task UpdateArticleAysnc(ArticleUpdateDto articleUpdateDto)
 		{
 			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleUpdateDto.Id, x => x.Category);
-
 			article.Title = articleUpdateDto.Title;
 			article.Content = articleUpdateDto.Content;
 			article.CategoryId = articleUpdateDto.CategoryId;
 
 			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
 			await unitOfWork.SaveAsync();
+		}
 
+		public async Task SafeDeleteArticleAsync(Guid articleId)
+		{
+			var article=await unitOfWork.GetRepository<Article>().GetByGuidAsync(articleId);
+			article.IsDeleted = true;
+			article.DeletedDate= DateTime.Now;
+
+			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
+
+			await unitOfWork.SaveAsync();
 		}
 	}
 }

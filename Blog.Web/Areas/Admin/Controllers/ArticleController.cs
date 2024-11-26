@@ -26,13 +26,14 @@ namespace Blog.Web.Areas.Admin.Controllers
 		public async Task<IActionResult> Add()
 		{
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
-			return View(new ArticleAddDto { Categories = categories });
+			return View(new ArticleAddDto 
+			{ Categories = categories	});
 		}
 		[HttpPost]
 		public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
 			await articleService.CreateArticleAsync(articleAddDto);
-			RedirectToAction("Index", "Article", new { Area = "Admin" });
+			 RedirectToAction("Index", "Article", new { Area = "Admin" });
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 			return View(new ArticleAddDto { Categories = categories });
 		}
@@ -52,6 +53,13 @@ namespace Blog.Web.Areas.Admin.Controllers
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 			articleUpdateDto.Categories = categories;
 			return View(articleUpdateDto);
+		}
+
+		public async Task<IActionResult>Delete(Guid articleId)
+		{
+			await articleService.SafeDeleteArticleAsync(articleId);
+		return	RedirectToAction("Index", "Article", new { Area = "Admin" });
+
 		}
 	}
 }
