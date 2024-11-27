@@ -4,6 +4,7 @@ using Blog.Data.Extensions;
 using Blog.Service.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NToastNotify;
 
 namespace Blog.Web
 {
@@ -19,7 +20,15 @@ namespace Blog.Web
 			builder.Services.AddSession();
 
 			// Add services to the container
-			builder.Services.AddControllersWithViews();
+			builder.Services.AddControllersWithViews()
+				.AddNToastNotifyToastr(new NToastNotify.ToastrOptions()
+				{
+					PositionClass=ToastPositions.TopRight,
+					TimeOut=3400
+				})
+				.AddRazorRuntimeCompilation();
+
+
 			builder.Services.AddIdentity<User,Role>(opt=>
 			{
 				opt.Password.RequireNonAlphanumeric = false;
@@ -56,7 +65,6 @@ namespace Blog.Web
 				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 				app.UseHsts();
 			}
-
 			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 			
@@ -77,6 +85,7 @@ namespace Blog.Web
 				endpoints.MapDefaultControllerRoute();
 				
 			});
+			app.UseNToastNotify();
 
 			app.Run();
 		}

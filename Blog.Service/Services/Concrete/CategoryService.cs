@@ -28,5 +28,6 @@ namespace Blog.Service.Services.Concrete
 
 			return map;
 		}
+
 	}
-	}
+}

@@ -15,9 +15,9 @@ namespace Blog.Entity.Entities
 		}
 		public Category(string name)
 		{
-		 CategoryName = name;
+			Name = name;
 		}
-		public string CategoryName { get; set; }
+		public string Name{ get; set; }
 		public ICollection<Article>Articles { get; set; }
 
 	}
