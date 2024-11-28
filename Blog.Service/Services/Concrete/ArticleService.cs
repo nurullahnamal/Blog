@@ -2,7 +2,9 @@
 using Blog.Data.UnitOfWorks;
 using Blog.Entity.DTOs.Articles;
 using Blog.Entity.Entities;
+using Blog.Entity.Enum;
 using Blog.Service.Extensions;
+using Blog.Service.Helpers.Images;
 using Blog.Service.Services.Abstractions;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -21,26 +23,27 @@ namespace Blog.Service.Services.Concrete
 		private readonly IHttpContextAccessor httpContextAccessor;
 		private readonly ClaimsPrincipal _user;
 
-		public ArticleService(IUnitOfWork unitOfWork, IMapper mapper,IHttpContextAccessor httpContextAccessor)
+		public readonly IImageHelper imageHelper;
+
+		public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, IImageHelper imageHelper)
 		{
 			this.unitOfWork = unitOfWork;
 			this.mapper = mapper;
 			this.httpContextAccessor = httpContextAccessor;
+			this.imageHelper = imageHelper;
 			_user = httpContextAccessor.HttpContext.User;
 		}
 
 		public async Task CreateArticleAsync(ArticleAddDto articleAddDto)
 		{
-			//var userId = Guid.Parse("DB1CDE1F-A458-428B-B0E2-AFE00C24C7B8");
+			var userId = _user.GetLogInUserId();
+			var userEmail = _user.GetLogInUserEmail();
+			var imageUpload = await imageHelper.Upload(articleAddDto.Title, articleAddDto.Photo, ImageType.Post);
+			Image image = new(imageUpload.FullName, articleAddDto.Photo.ContentType, userEmail);
+			await unitOfWork.GetRepository<Image>().AddAsync(image);
 
-			
-			var userId=_user.GetLogInUserId();
-			var userEmail=_user.GetLogInUserEmail();
+			var article = new Article(articleAddDto.Title, articleAddDto.Content, userId, userEmail, articleAddDto.CategoryId, image.Id);
 
-			var imageId = Guid.Parse("4028094A-6692-442E-8952-555355BDAF74");
-
-			var article = new Article(articleAddDto.Title, articleAddDto.Content, userId,userEmail,articleAddDto.CategoryId, imageId);
-			
 
 			await unitOfWork.GetRepository<Article>().AddAsync(article);
 			await unitOfWork.SaveAsync();
@@ -54,19 +57,35 @@ namespace Blog.Service.Services.Concrete
 		}
 		public async Task<ArticleDto> GetArticleWithCategoryNonDeletedAsync(Guid articleId)
 		{
-			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleId, x => x.Category);
+			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleId, x => x.Category, i => i.Image);
 			var map = mapper.Map<ArticleDto>(article);
 			return map;
 		}
 		public async Task<string> UpdateArticleAsync(ArticleUpdateDto articleUpdateDto)
 		{
-			var userEmail=_user.GetLogInUserEmail();
-			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleUpdateDto.Id, x => x.Category);
+			var userEmail = _user.GetLogInUserEmail();
+			var article = await unitOfWork.GetRepository<Article>().GetAsync(
+				x => !x.IsDeleted && x.Id == articleUpdateDto.Id,
+				x => x.Category,
+				i => i.Image
+			);
+
+			if (articleUpdateDto.Photo != null)
+			{
+				imageHelper.Delete(article.Image.FileName);
+
+				var imageUpload = await imageHelper.Upload(articleUpdateDto.Title, articleUpdateDto.Photo, ImageType.Post);
+				Image image = new(imageUpload.FullName, articleUpdateDto.Photo.ContentType, userEmail);
+
+				await unitOfWork.GetRepository<Image>().AddAsync(image);
+				article.ImageId = image.Id;
+			}
+
 			article.Title = articleUpdateDto.Title;
 			article.Content = articleUpdateDto.Content;
 			article.CategoryId = articleUpdateDto.CategoryId;
-			article.ModifiedDate=DateTime.Now;
-			article.ModifiedBy=userEmail;
+			article.ModifiedDate = DateTime.Now;
+			article.ModifiedBy = userEmail;
 
 			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
 			await unitOfWork.SaveAsync();
@@ -74,15 +93,16 @@ namespace Blog.Service.Services.Concrete
 			return article.Title;
 		}
 
-		public async Task <string>SafeDeleteArticleAsync(Guid articleId)
+
+		public async Task<string> SafeDeleteArticleAsync(Guid articleId)
 		{
 
 			var userEmail = _user.GetLogInUserEmail();
 
-			var article =await unitOfWork.GetRepository<Article>().GetByGuidAsync(articleId);
+			var article = await unitOfWork.GetRepository<Article>().GetByGuidAsync(articleId);
 			article.IsDeleted = true;
-			article.DeletedDate= DateTime.Now;
-			article.DeletedBy=userEmail;
+			article.DeletedDate = DateTime.Now;
+			article.DeletedBy = userEmail;
 
 			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
 

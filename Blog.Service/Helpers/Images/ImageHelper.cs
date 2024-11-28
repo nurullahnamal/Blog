@@ -87,6 +87,9 @@ namespace Blog.Service.Helpers.Images
 
 		public async Task<ImageUploadedDto> Upload(string name, IFormFile imageFile, ImageType imageType, string folderName = null)
 		{
+			if (imageFile == null)
+				throw new ArgumentNullException(nameof(imageFile), "Yüklemek için geçerli bir dosya seçilmedi.");
+
 			folderName ??= imageType == ImageType.User ? userImagesFolder : articleImagesFolder;
 			if (!Directory.Exists($"{wwwRoot}/{imgFolder}/{folderName}"))
 				Directory.CreateDirectory($"{wwwRoot}/{imgFolder}/{folderName}");
@@ -113,5 +116,6 @@ namespace Blog.Service.Helpers.Images
 				FullName = $"{folderName}/{newFileName}",
 			};
 		}
+
 	}
 }
