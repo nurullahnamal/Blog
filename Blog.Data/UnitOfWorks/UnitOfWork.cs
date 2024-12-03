@@ -1,11 +1,6 @@
 ﻿using Blog.Data.Context;
 using Blog.Data.Repositories.Abstracts;
 using Blog.Data.Repositories.Concretes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blog.Data.UnitOfWorks
 {

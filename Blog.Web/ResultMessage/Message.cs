@@ -20,5 +20,25 @@
 
 			}
 		}
+
+
+		public static class Category
+		{
+			public static string Add(string categoryName)
+			{
+				return $" {categoryName} İşlem Başarılı, Ekleme Yapıldı.";
+
+			}
+			public static string Update(string categoryTitle)
+			{
+				return $" {categoryTitle} İşlem Başarılı, Güncelleme Yapıldı.";
+
+			}
+			public static string Delete(string articleTitle)
+			{
+				return $" {articleTitle} İşlem Başarılı, Silme işlemi Yapıldı.";
+
+			}
+		}
 	}
 }
