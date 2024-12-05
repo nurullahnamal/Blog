@@ -40,5 +40,24 @@
 
 			}
 		}
+		public static class User
+		{
+			public static string Add(string userName)
+			{
+				return $" {userName} İşlem Başarılı, Ekleme Yapıldı.";
+
+			}
+			public static string Update(string userName)
+			{
+				return $" {userName} İşlem Başarılı, Güncelleme Yapıldı.";
+
+			}
+			public static string Delete(string userName)
+			{
+				return $" {userName} İşlem Başarılı, Silme işlemi Yapıldı.";
+
+			}
+		}
+
 	}
 }
