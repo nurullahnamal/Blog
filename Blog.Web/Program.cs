@@ -5,6 +5,7 @@ using Blog.Service.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NToastNotify;
+using Blog.Service.Describers;
 
 namespace Blog.Web
 {
@@ -36,6 +37,7 @@ namespace Blog.Web
 				opt.Password.RequireUppercase = false;
 			})
 				.AddRoleManager<RoleManager<Role>>()
+				.AddErrorDescriber<CustomIdentityErrorDescriber>()
 				.AddEntityFrameworkStores<AppDbContext>()
 				.AddDefaultTokenProviders();
 

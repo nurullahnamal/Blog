@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,6 +18,15 @@ namespace Blog.Service.Extensions
 				error.ToString();
 			}
 		}
+		public static void AddToIdentityModelState(this IdentityResult result, ModelStateDictionary modelState)
+		{
+			foreach (var error in result.Errors)
+			{
+				modelState.AddModelError("", error.Description);
+			}
+		}
+
+
 
 	}
 }
