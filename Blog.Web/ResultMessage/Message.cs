@@ -18,6 +18,10 @@
 			{
 				return $" {articleTitle} İşlem Başarılı, Silme işlemi Yapıldı.";
 
+			}public static string UndoDelete(string articleTitle)
+			{
+				return $" {articleTitle} İşlem Başarılı, Geri Alma işlemi Yapıldı.";
+
 			}
 		}
 
@@ -37,6 +41,11 @@
 			public static string Delete(string articleTitle)
 			{
 				return $" {articleTitle} İşlem Başarılı, Silme işlemi Yapıldı.";
+
+			}
+			public static string UndoDelete(string articleTitle)
+			{
+				return $" {articleTitle} İşlem Başarılı, Geri Alma  işlemi Yapıldı.";
 
 			}
 		}
