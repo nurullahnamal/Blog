@@ -5,6 +5,7 @@ using Blog.Service.Services.Abstractions;
 using Blog.Web.ResultMessage;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
 using System.ComponentModel.DataAnnotations;
@@ -27,14 +28,23 @@ namespace Blog.Web.Areas.Admin.Controllers
 			this.categoryService = categoryService;
 			this.mapper = mapper;
 		}
-		[HttpGet]
 
+
+
+
+
+
+
+
+		[HttpGet]
+		[Authorize(Roles ="RootAdmin, Admin, User")]
 		public async Task<IActionResult> Index()
 		{
 			var articles = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
 			return View(articles);
 		}
 		[HttpGet]
+		[Authorize(Roles = "RootAdmin, Admin")]
 
 		public async Task<IActionResult> DeletedArticle()
 		{
@@ -42,6 +52,8 @@ namespace Blog.Web.Areas.Admin.Controllers
 			return View(articles);
 		}
 		[HttpGet]
+		[Authorize(Roles = "RootAdmin, Admin")]
+
 		public async Task<IActionResult> Add()
 		{
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
@@ -49,6 +61,8 @@ namespace Blog.Web.Areas.Admin.Controllers
 			{ Categories = categories });
 		}
 		[HttpPost]
+		[Authorize(Roles = "RootAdmin, Admin")]
+
 		public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
 			var map = mapper.Map<Article>(articleAddDto);
@@ -69,6 +83,8 @@ namespace Blog.Web.Areas.Admin.Controllers
 
 		}
 		[HttpGet]
+		[Authorize(Roles = "RootAdmin, Admin")]
+
 		public async Task<IActionResult> Update(Guid articleId)
 		{
 			var article = await articleService.GetArticleWithCategoryNonDeletedAsync(articleId);
@@ -78,6 +94,8 @@ namespace Blog.Web.Areas.Admin.Controllers
 			return View(articleUpdateDto);
 		}
 		[HttpPost]
+		[Authorize(Roles = "RootAdmin, Admin")]
+
 		public async Task<IActionResult> Update(ArticleUpdateDto articleUpdateDto)
 		{
 			var map = mapper.Map<Article>(articleUpdateDto);
@@ -99,6 +117,7 @@ namespace Blog.Web.Areas.Admin.Controllers
 			articleUpdateDto.Categories = categories;
 			return View(articleUpdateDto);
 		}
+		[Authorize(Roles = "RootAdmin, Admin")]
 
 		public async Task<IActionResult> Delete(Guid articleId)
 		{
@@ -108,7 +127,8 @@ namespace Blog.Web.Areas.Admin.Controllers
 			return RedirectToAction("Index", "Article", new { Area = "Admin" });
 
 		}
-		
+		[Authorize(Roles ="RootAdmin, Admin")]
+
 		public async Task<IActionResult> UndoDelete(Guid articleId)
 		{
 		var title=	await articleService.UndoDeleteArticleAsync(articleId);
