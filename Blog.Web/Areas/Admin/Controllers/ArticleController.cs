@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Blog.Entity.DTOs.Articles;
 using Blog.Entity.Entities;
+using Blog.Service.Consts;
 using Blog.Service.Services.Abstractions;
 using Blog.Web.ResultMessage;
 using FluentValidation;
@@ -16,96 +17,88 @@ namespace Blog.Web.Areas.Admin.Controllers
 	public class ArticleController : Controller
 	{
 		private readonly IArticleService articleService;
-		private readonly IToastNotification toastNotification;
 		private readonly ICategoryService categoryService;
 		private readonly IMapper mapper;
 		private readonly IValidator<Article> validator;
-		public ArticleController(IArticleService articleService, ICategoryService categoryService, IMapper mapper, IValidator<Article> validator, IToastNotification toastNotification)
+		private readonly IToastNotification toast;
+
+		public ArticleController(IArticleService articleService, ICategoryService categoryService, IMapper mapper, IValidator<Article> validator, IToastNotification toast)
 		{
-			this.toastNotification = toastNotification;
-			this.validator = validator;
 			this.articleService = articleService;
 			this.categoryService = categoryService;
 			this.mapper = mapper;
+			this.validator = validator;
+			this.toast = toast;
 		}
-
-
-
-
-
-
-
-
 		[HttpGet]
-		[Authorize(Roles ="RootAdmin, Admin, User")]
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}, {RoleConsts.User}")]
 		public async Task<IActionResult> Index()
 		{
 			var articles = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
 			return View(articles);
 		}
 		[HttpGet]
-		[Authorize(Roles = "RootAdmin, Admin")]
-
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 		public async Task<IActionResult> DeletedArticle()
 		{
-			var articles = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
+			var articles = await articleService.GetAllArticlesWithCategoryDeletedArticles();
 			return View(articles);
 		}
 		[HttpGet]
-		[Authorize(Roles = "RootAdmin, Admin")]
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 
 		public async Task<IActionResult> Add()
 		{
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
-			return View(new ArticleAddDto
-			{ Categories = categories });
+			return View(new ArticleAddDto { Categories = categories });
 		}
 		[HttpPost]
-		[Authorize(Roles = "RootAdmin, Admin")]
-
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 		public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
 			var map = mapper.Map<Article>(articleAddDto);
 			var result = await validator.ValidateAsync(map);
+
 			if (result.IsValid)
 			{
 				await articleService.CreateArticleAsync(articleAddDto);
-				toastNotification.AddSuccessToastMessage(Message.Article.Add(articleTitle: articleAddDto.Title));
+				toast.AddSuccessToastMessage(Message.Article.Add(articleAddDto.Title), new ToastrOptions { Title = "İşlem Başarılı" });
 				return RedirectToAction("Index", "Article", new { Area = "Admin" });
 			}
 			else
 			{
 				result.AddToModelState(this.ModelState);
 			}
+
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 			return View(new ArticleAddDto { Categories = categories });
 
 
 		}
 		[HttpGet]
-		[Authorize(Roles = "RootAdmin, Admin")]
-
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 		public async Task<IActionResult> Update(Guid articleId)
 		{
 			var article = await articleService.GetArticleWithCategoryNonDeletedAsync(articleId);
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
+
 			var articleUpdateDto = mapper.Map<ArticleUpdateDto>(article);
 			articleUpdateDto.Categories = categories;
+
 			return View(articleUpdateDto);
 		}
 		[HttpPost]
-		[Authorize(Roles = "RootAdmin, Admin")]
-
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 		public async Task<IActionResult> Update(ArticleUpdateDto articleUpdateDto)
 		{
+
 			var map = mapper.Map<Article>(articleUpdateDto);
 			var result = await validator.ValidateAsync(map);
 
-			if (!result.IsValid)
+			if (result.IsValid)
 			{
 				var title = await articleService.UpdateArticleAsync(articleUpdateDto);
-
-				toastNotification.AddSuccessToastMessage(Message.Article.Update(title),new ToastrOptions() { Title="işlem başarılı"});
+				toast.AddSuccessToastMessage(Message.Article.Update(title), new ToastrOptions() { Title = "İşlem Başarılı" });
 				return RedirectToAction("Index", "Article", new { Area = "Admin" });
 
 			}
@@ -113,29 +106,29 @@ namespace Blog.Web.Areas.Admin.Controllers
 			{
 				result.AddToModelState(this.ModelState);
 			}
+
+
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 			articleUpdateDto.Categories = categories;
 			return View(articleUpdateDto);
 		}
-		[Authorize(Roles = "RootAdmin, Admin")]
-
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 		public async Task<IActionResult> Delete(Guid articleId)
 		{
-		var title=	await articleService.SafeDeleteArticleAsync(articleId);
-			toastNotification.AddSuccessToastMessage(Message.Article.Delete(title), new ToastrOptions() { Title = "işlem başarılı" });
+			var title = await articleService.SafeDeleteArticleAsync(articleId);
+			toast.AddSuccessToastMessage(Message.Article.Delete(title), new ToastrOptions() { Title = "İşlem Başarılı" });
+
 
 			return RedirectToAction("Index", "Article", new { Area = "Admin" });
-
 		}
-		[Authorize(Roles ="RootAdmin, Admin")]
-
+		[Authorize(Roles = $"{RoleConsts.RootAdmin}, {RoleConsts.Admin}")]
 		public async Task<IActionResult> UndoDelete(Guid articleId)
 		{
-		var title=	await articleService.UndoDeleteArticleAsync(articleId);
-			toastNotification.AddSuccessToastMessage(Message.Article.UndoDelete(title), new ToastrOptions() { Title = "işlem başarılı" });
+			var title = await articleService.UndoDeleteArticleAsync(articleId);
+			toast.AddSuccessToastMessage(Message.Article.UndoDelete(title), new ToastrOptions() { Title = "İşlem Başarılı" });
+
 
 			return RedirectToAction("Index", "Article", new { Area = "Admin" });
-
 		}
 	}
 }
