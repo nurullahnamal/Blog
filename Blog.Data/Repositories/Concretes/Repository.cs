@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Blog.Data.Repositories.Concretes
 {
-	public class Repository<T>:IRepository<T> where T : class,IEntityBase, new ()
+	public class Repository<T> : IRepository<T> where T : class, IEntityBase, new()
 	{
 		private readonly AppDbContext dbContext;
 
@@ -19,17 +19,17 @@ namespace Blog.Data.Repositories.Concretes
 		{
 			this.dbContext = dbContext;
 		}
-		private DbSet<T> Table {  get=>dbContext.Set<T>();  } // table bizim için metot için de her defasında dbContext.Set<T>(). işlemini yazmak zorunda bırakıcaktı bizde işlemi kısalttık.
+		private DbSet<T> Table { get => dbContext.Set<T>(); } // table bizim için metot için de her defasında dbContext.Set<T>(). işlemini yazmak zorunda bırakıcaktı bizde işlemi kısalttık.
 
-		public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate = null,params Expression<Func<T, object>>[] includeProperties)
+		public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate = null, params Expression<Func<T, object>>[] includeProperties)
 		{
 			IQueryable<T> query = Table;
-			if(predicate!= null)
+			if (predicate != null)
 				query = query.Where(predicate);
 
 			if (includeProperties.Any())
 				foreach (var property in includeProperties)
-					query =query.Include(property);
+					query = query.Include(property);
 			return await query.ToListAsync();
 		}
 
@@ -41,7 +41,7 @@ namespace Blog.Data.Repositories.Concretes
 		public async Task<T> GetAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeProperties)
 		{
 			IQueryable<T> query = Table;
-				query = query.Where(predicate);
+			query = query.Where(predicate);
 
 			if (includeProperties.Any())
 				foreach (var item in includeProperties)
@@ -73,8 +73,9 @@ namespace Blog.Data.Repositories.Concretes
 
 		public async Task<int> CountAsync(Expression<Func<T, bool>> predicate = null)
 		{
-			return  await Table.CountAsync(predicate);
-
+			if (predicate is not null)
+				return await Table.CountAsync(predicate);
+			return await Table.CountAsync();
 		}
 	}
 }

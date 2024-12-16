@@ -31,11 +31,24 @@ namespace Blog.Service.Services.Concrete
 			{
 				var startedDate=new DateTime(startDate.Year, i, 1);
 				var endedDate=startedDate.Date;	
-				var data =articles.Where(x=>x.CreatedDate>=startDate && x.CreatedDate<=endedDate).Count();
+				var data =articles.Where(x=>x.CreatedDate>=startDate && x.CreatedDate<endedDate).Count();
 				datas.Add(data);
 			}
 			return datas;
 		}
+
+		public async Task<int> GetTotalArticleCount()
+		{
+			var articleCount =await unitOfWork.GetRepository<Article>().CountAsync();
+			return articleCount;
+		}
+		
+		public async Task<int> GetTotalCategoryCount()
+		{
+			var categoryCount =await unitOfWork.GetRepository<Category>().CountAsync();
+			return categoryCount;
+		}
+
 	}
 }
 
