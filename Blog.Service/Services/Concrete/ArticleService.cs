@@ -92,7 +92,7 @@ namespace Blog.Service.Services.Concrete
 		public async Task<ArticleDto> GetArticleWithCategoryNonDeletedAsync(Guid articleId)
 		{
 
-			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleId, x => x.Category, i => i.Image);
+			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleId, x => x.Category, i => i.Image,u=>u.User);
 			var map = mapper.Map<ArticleDto>(article);
 
 			return map;
