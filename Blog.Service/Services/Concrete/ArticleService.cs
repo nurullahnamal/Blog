@@ -32,6 +32,36 @@ namespace Blog.Service.Services.Concrete
 			_user = httpContextAccessor.HttpContext.User;
 			this.imageHelper = imageHelper;
 		}
+		public async Task<ArticleListDto> GetAllByPagingAsync(Guid? categoryId, int currentPage = 1, int pageSize = 3, bool isAscending = false)
+		{
+			var article = categoryId == null
+				? await unitOfWork.GetRepository<Article>()
+				  .GetAllAsync(a => !a.IsDeleted, a => a.Category, i => i.Image)
+				: await unitOfWork.GetRepository<Article>()
+				  .GetAllAsync(a => a.CategoryId == categoryId && !a.IsDeleted, x => x.Category, i => i.Image);
+
+
+			var sortedArticles = isAscending
+				? article.OrderBy(x => x.CreatedDate)
+						 .Skip((currentPage - 1) * pageSize)
+						 .Take(pageSize)
+						 .ToList()
+				: article.OrderByDescending(x => x.CreatedDate)
+						 .Skip((currentPage - 1) * pageSize)
+						 .Take(pageSize)
+						 .ToList();
+			return new ArticleListDto
+			{
+				Articles = sortedArticles,
+				CategoryId = categoryId == null ? null : categoryId.Value,
+				CurrentPage = currentPage,
+				PageSize = pageSize,
+				TotalCount = article.Count,
+				IsAscending = isAscending
+
+			};
+
+		}
 
 		public async Task CreateArticleAsync(ArticleAddDto articleAddDto)
 		{
@@ -112,8 +142,8 @@ namespace Blog.Service.Services.Concrete
 
 		public async Task<List<ArticleDto>> GetAllArticlesWithCategoryDeletedArticles()
 		{
-			var articles =await unitOfWork.GetRepository<Article>().GetAllAsync(x=>x.IsDeleted,x=>x.Category);
-			var map = mapper.Map<List<ArticleDto>>(articles);	
+			var articles = await unitOfWork.GetRepository<Article>().GetAllAsync(x => x.IsDeleted, x => x.Category);
+			var map = mapper.Map<List<ArticleDto>>(articles);
 			return map;
 		}
 
